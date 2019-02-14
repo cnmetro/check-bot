@@ -1,18 +1,19 @@
-const dateFns = require('date-fns')
+const { format, subDays } = require('date-fns')
 const axios = require('axios')
 
 const cityArr = ['sh', 'bj', 'gz']
-const todayStr = dateFns.format(new Date(), 'YYYY-MM-DD')
+const todayStr = format(subDays(new Date(), 1), 'YYYY-MM-DD')
 
 cityArr.forEach(city => {
   const url = `http://metro.sinchang.me/api/flows?city=${city}&count=1`
   axios(url)
     .then(res => {
-      if (res.data[0].date !== todayStr) {
-        throw new Error(`Not found ${city}'s data in ${todayStr}`)
+      if (res.data.data[0].date !== todayStr) {
+        console.log(`Not found ${city}'s data in ${todayStr}`)
+        process.exit(1)
       }
     })
-    .catch(err => {
-      throw new Error(err)
+    .catch(() => {
+      process.exit(1)
     })
 })
